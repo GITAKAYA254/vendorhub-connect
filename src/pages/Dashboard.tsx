@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthStore } from '@/store/authStore';
 import { DashboardProducts } from '@/components/dashboard/DashboardProducts';
@@ -16,10 +14,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Vendor Dashboard</h1>
           <p className="text-muted-foreground">
@@ -46,10 +41,7 @@ const Dashboard = () => {
             <DashboardTasks />
           </TabsContent>
         </Tabs>
-      </main>
-
-      <Footer />
-    </div>
+    </main>
   );
 };
 

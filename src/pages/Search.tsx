@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { ProductCard } from '@/components/ProductCard';
 import { JobCard } from '@/components/JobCard';
 import { TaskCard } from '@/components/TaskCard';
@@ -37,10 +35,7 @@ const Search = () => {
     : 0;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">
             Search Results for "{query}"
@@ -151,10 +146,7 @@ const Search = () => {
             </TabsContent>
           </Tabs>
         )}
-      </main>
-
-      <Footer />
-    </div>
+    </main>
   );
 };
 

@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -46,20 +44,12 @@ const VendorProfile = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <LoadingSpinner />
-        <Footer />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!vendor) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Store className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold mb-2">Vendor Not Found</h2>
@@ -67,18 +57,13 @@ const VendorProfile = () => {
               <Button>Back to Home</Button>
             </Link>
           </div>
-        </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1">
-        {/* Vendor Header */}
+    <>
+      {/* Vendor Header */}
         <div className="bg-gradient-to-br from-primary/5 to-accent/5 py-12 mb-8">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-6">
@@ -170,10 +155,7 @@ const VendorProfile = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 
