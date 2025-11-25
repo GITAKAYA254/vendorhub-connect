@@ -1,5 +1,3 @@
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { JobCard } from '@/components/JobCard';
@@ -35,9 +33,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
+    <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 md:py-32">
         <div className="container mx-auto px-4">
@@ -200,9 +196,7 @@ const Index = () => {
           </Link>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

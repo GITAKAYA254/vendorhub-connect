@@ -1,5 +1,3 @@
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCartStore } from '@/store/cartStore';
@@ -13,9 +11,7 @@ const Cart = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1">
+      <main className="flex-1">
           <EmptyState
             icon={ShoppingBag}
             title="Your cart is empty"
@@ -25,17 +21,12 @@ const Cart = () => {
               onClick: () => window.location.href = '/products',
             }}
           />
-        </main>
-        <Footer />
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <main className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -141,10 +132,7 @@ const Cart = () => {
             </Card>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+    </main>
   );
 };
 

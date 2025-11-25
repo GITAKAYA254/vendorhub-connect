@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
@@ -40,20 +38,12 @@ const ProductDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <LoadingSpinner />
-        <Footer />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold mb-2">Product Not Found</h2>
@@ -61,17 +51,12 @@ const ProductDetail = () => {
               <Button>Back to Products</Button>
             </Link>
           </div>
-        </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <main className="flex-1 container mx-auto px-4 py-8">
+    <main className="flex-1 container mx-auto px-4 py-8">
         <Link to="/products">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -137,10 +122,7 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+    </main>
   );
 };
 
