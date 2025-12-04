@@ -108,7 +108,7 @@ export const DashboardJobs = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-2xl font-semibold">Your Jobs</h2>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
@@ -146,7 +146,7 @@ export const DashboardJobs = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="budget">Budget ($)</Label>
                   <Input
@@ -206,21 +206,21 @@ export const DashboardJobs = () => {
           {jobs.map((job) => (
             <Card key={job.id}>
               <CardContent className="p-6">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="font-semibold text-lg">{job.title}</h3>
                       <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
                         {job.status.replace('_', ' ')}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{job.description}</p>
-                    <div className="flex items-center gap-4 text-sm">
+                    <div className="flex flex-wrap items-center gap-4 text-sm">
                       <span className="font-medium text-primary">${job.budget.toLocaleString()}</span>
                       <span className="text-muted-foreground">{job.category}</span>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex gap-2 sm:ml-4">
                     <Button size="sm" variant="outline" onClick={() => handleEdit(job)}>
                       <Edit className="h-4 w-4" />
                     </Button>

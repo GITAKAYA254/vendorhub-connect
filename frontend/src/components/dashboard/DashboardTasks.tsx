@@ -108,7 +108,7 @@ export const DashboardTasks = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="text-2xl font-semibold">Your Tasks</h2>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
@@ -146,7 +146,7 @@ export const DashboardTasks = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority</Label>
                   <Select value={formData.priority} onValueChange={(value: any) => setFormData({ ...formData, priority: value })}>
@@ -209,9 +209,9 @@ export const DashboardTasks = () => {
           {tasks.map((task) => (
             <Card key={task.id}>
               <CardContent className="p-6">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="font-semibold text-lg">{task.title}</h3>
                       <Badge variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}>
                         {task.priority}
@@ -227,7 +227,7 @@ export const DashboardTasks = () => {
                       </span>
                     )}
                   </div>
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex gap-2 sm:ml-4">
                     <Button size="sm" variant="outline" onClick={() => handleEdit(task)}>
                       <Edit className="h-4 w-4" />
                     </Button>
