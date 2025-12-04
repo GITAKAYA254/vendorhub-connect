@@ -1,5 +1,6 @@
 // MCP API Service Layer
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 interface ApiResponse<T> {
   data?: T;
@@ -12,54 +13,70 @@ class ApiService {
     options?: RequestInit
   ): Promise<ApiResponse<T>> {
     try {
+      // If a token is stored in localStorage (login via header flow), attach it
+      const storedToken =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const authHeader = storedToken
+        ? { Authorization: `Bearer ${storedToken}` }
+        : {};
+
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          ...authHeader,
           ...options?.headers,
         },
-        credentials: 'include',
+        // keep cookie flow working for existing cookie-based auth
+        credentials: "include",
       });
 
       if (!response.ok) {
         const error = await response.json();
-        return { error: error.message || 'Request failed' };
+        return { error: error.message || "Request failed" };
       }
 
       const data = await response.json();
       return { data };
     } catch (error) {
-      return { error: error instanceof Error ? error.message : 'Network error' };
+      return {
+        error: error instanceof Error ? error.message : "Network error",
+      };
     }
   }
 
   // Auth APIs
   async getUser() {
-    return this.request<User>('/api/auth/user');
+    return this.request<User>("/api/auth/user");
   }
 
-  async register(email: string, password: string, name: string, isVendor: boolean = false) {
-    return this.request<{ user: User; token: string }>('/api/auth/register', {
-      method: 'POST',
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    isVendor: boolean = false
+  ) {
+    return this.request<{ user: User; token: string }>("/api/auth/register", {
+      method: "POST",
       body: JSON.stringify({ email, password, name, isVendor }),
     });
   }
 
   async login(email: string, password: string) {
-    return this.request<{ user: User; token: string }>('/api/auth/login', {
-      method: 'POST',
+    return this.request<{ user: User; token: string }>("/api/auth/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
   }
 
   async logout() {
-    return this.request('/api/auth/logout', { method: 'POST' });
+    return this.request("/api/auth/logout", { method: "POST" });
   }
 
   // Vendor APIs
   async createVendor(data: Partial<Vendor>) {
-    return this.request<Vendor>('/api/vendors', {
-      method: 'POST',
+    return this.request<Vendor>("/api/vendors", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -70,8 +87,8 @@ class ApiService {
 
   // Product APIs
   async createProduct(data: Partial<Product>) {
-    return this.request<Product>('/api/products', {
-      method: 'POST',
+    return this.request<Product>("/api/products", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -87,19 +104,19 @@ class ApiService {
 
   async updateProduct(id: string, data: Partial<Product>) {
     return this.request<Product>(`/api/products/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteProduct(id: string) {
-    return this.request(`/api/products/${id}`, { method: 'DELETE' });
+    return this.request(`/api/products/${id}`, { method: "DELETE" });
   }
 
   // Job APIs
   async createJob(data: Partial<Job>) {
-    return this.request<Job>('/api/jobs', {
-      method: 'POST',
+    return this.request<Job>("/api/jobs", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -115,19 +132,19 @@ class ApiService {
 
   async updateJob(id: string, data: Partial<Job>) {
     return this.request<Job>(`/api/jobs/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteJob(id: string) {
-    return this.request(`/api/jobs/${id}`, { method: 'DELETE' });
+    return this.request(`/api/jobs/${id}`, { method: "DELETE" });
   }
 
   // Task APIs
   async createTask(data: Partial<Task>) {
-    return this.request<Task>('/api/tasks', {
-      method: 'POST',
+    return this.request<Task>("/api/tasks", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -143,18 +160,20 @@ class ApiService {
 
   async updateTask(id: string, data: Partial<Task>) {
     return this.request<Task>(`/api/tasks/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteTask(id: string) {
-    return this.request(`/api/tasks/${id}`, { method: 'DELETE' });
+    return this.request(`/api/tasks/${id}`, { method: "DELETE" });
   }
 
   // Search API
   async search(query: string) {
-    return this.request<SearchResults>(`/api/search?q=${encodeURIComponent(query)}`);
+    return this.request<SearchResults>(
+      `/api/search?q=${encodeURIComponent(query)}`
+    );
   }
 }
 
@@ -198,7 +217,7 @@ export interface Job {
   description: string;
   budget: number;
   category: string;
-  status: 'open' | 'in_progress' | 'completed';
+  status: "open" | "in_progress" | "completed";
   createdAt: string;
 }
 
@@ -207,8 +226,8 @@ export interface Task {
   vendorId: string;
   title: string;
   description: string;
-  priority: 'low' | 'medium' | 'high';
-  status: 'pending' | 'in_progress' | 'completed';
+  priority: "low" | "medium" | "high";
+  status: "pending" | "in_progress" | "completed";
   dueDate?: string;
   createdAt: string;
 }

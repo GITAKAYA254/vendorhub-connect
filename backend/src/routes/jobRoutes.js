@@ -8,15 +8,15 @@ import {
 } from '../controllers/jobController.js';
 import { validateRequest } from '../middleware/validateRequest.js';
 import { createJobSchema, updateJobSchema, jobIdSchema } from '../validators/jobSchemas.js';
-import { authenticate, requireVendor } from '../middleware/authMiddleware.js';
+import { authenticate, requireRole } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
 router.get('/', listJobsHandler);
 router.get('/:id', validateRequest(jobIdSchema), getJobHandler);
-router.post('/', authenticate, requireVendor, validateRequest(createJobSchema), createJobHandler);
-router.put('/:id', authenticate, requireVendor, validateRequest(updateJobSchema), updateJobHandler);
-router.delete('/:id', authenticate, requireVendor, validateRequest(jobIdSchema), deleteJobHandler);
+router.post('/', authenticate, requireRole('vendor'), validateRequest(createJobSchema), createJobHandler);
+router.put('/:id', authenticate, requireRole('vendor'), validateRequest(updateJobSchema), updateJobHandler);
+router.delete('/:id', authenticate, requireRole('vendor'), validateRequest(jobIdSchema), deleteJobHandler);
 
 export default router;
 

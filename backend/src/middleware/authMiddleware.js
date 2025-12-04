@@ -39,9 +39,19 @@ export const authenticate = async (req, res, next) => {
 };
 
 // Authorization helper: ensures the authenticated user is a vendor
-export const requireVendor = (req, res, next) => {
-  if (req.user?.role !== "vendor") {
-    return res.status(403).json(errorResponse("Vendor access required"));
+// Generic role-checking middleware factory. Usage: requireRole('vendor')
+// Admin users will bypass role checks and have access to everything.
+export const requireRole = (role) => (req, res, next) => {
+  const wanted = String(role || "").toLowerCase();
+  const userRole = String(req.user?.role || "").toLowerCase();
+
+  // allow admin to bypass specific role checks
+  if (userRole === "admin" || userRole === wanted) {
+    return next();
   }
-  next();
+
+  return res.status(403).json(errorResponse("Insufficient permissions"));
 };
+
+// Backwards-compatible helper for vendor-only routes
+export const requireVendor = requireRole("vendor");

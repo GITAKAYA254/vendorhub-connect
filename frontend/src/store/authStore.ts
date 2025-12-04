@@ -28,6 +28,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       return false;
     }
     
+    // If server returns a token (also set as cookie), save it to localStorage
+    const token = result.data?.token;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('token', token);
+    }
+
     set({ user: result.data?.user || null, isLoading: false });
     return true;
   },
@@ -41,12 +47,20 @@ export const useAuthStore = create<AuthState>((set) => ({
       return false;
     }
     
+    const token = result.data?.token;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('token', token);
+    }
+
     set({ user: result.data?.user || null, isLoading: false });
     return true;
   },
 
   logout: async () => {
     await api.logout();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
     set({ user: null, error: null });
   },
 
