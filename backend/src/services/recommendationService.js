@@ -14,7 +14,7 @@ export const getRelatedProducts = async (productId, limit = 5) => {
     // or use simple database OR query.
 
     // Check tags support
-    const tags = product.tags || [];
+    const tags = Array.isArray(product.tags) ? product.tags : [];
 
     const related = await prisma.product.findMany({
         where: {
@@ -35,7 +35,8 @@ export const getRelatedProducts = async (productId, limit = 5) => {
         if (p.category === product.category) score += 3;
         if (p.vendorId === product.vendorId) score += 1;
 
-        const sharedTags = p.tags.filter(t => tags.includes(t)).length;
+        const pTags = Array.isArray(p.tags) ? p.tags : [];
+        const sharedTags = pTags.filter(t => tags.includes(t)).length;
         score += sharedTags * 2;
 
         return { ...p, score };
