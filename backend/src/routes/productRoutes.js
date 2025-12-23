@@ -30,7 +30,7 @@ router.post(
   requireRole('vendor'),
   upload.array('images', 5),
   handleMulterError,
-  // validateRequest(createProductSchema), // Disabled strict schema validation for multipart/form-data simplicity, or ensure schema handles string coercion
+  validateRequest(createProductSchema),
   createProductHandler
 );
 
@@ -40,7 +40,7 @@ router.put(
   requireRole('vendor'),
   upload.array('images', 5),
   handleMulterError,
-  // validateRequest(updateProductSchema),
+  validateRequest(updateProductSchema),
   updateProductHandler
 );
 

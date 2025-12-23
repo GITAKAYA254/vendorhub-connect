@@ -12,6 +12,7 @@ export const initiatePayment = async (userId, { amount, phoneNumber, orderId, pr
             provider,
             status: 'pending',
             reference,
+            userId, // Link payment to user
             orderPaymentLink: {
                 create: {
                     orderId,

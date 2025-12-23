@@ -47,6 +47,7 @@ model User {
   productReviews ProductReview[]
   vendorReviewsGiven VendorReview[] @relation("VendorReviewsGiven")
   vendorReviewsReceived VendorReview[] @relation("VendorReviewsReceived")
+  payments     Payment[]
 }
 
 model VendorProfile {
@@ -121,6 +122,9 @@ model Payment {
   reference     String
   metadata      Json?
   
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+
   orderPaymentLink OrderPaymentLink?
   
   createdAt     DateTime @default(now())
