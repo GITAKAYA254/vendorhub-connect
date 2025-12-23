@@ -26,7 +26,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {product.image ? (
             <img
               src={product.image}
-              alt={product.name}
+              alt={product.title || product.name}
               className="h-full w-full object-cover transition-transform group-hover:scale-105"
             />
           ) : (
@@ -35,10 +35,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           )}
         </div>
-        
+
         <CardContent className="p-4">
           <h3 className="font-semibold line-clamp-1 group-hover:text-primary transition-colors">
-            {product.name}
+            {product.title || product.name}
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
             {product.description}

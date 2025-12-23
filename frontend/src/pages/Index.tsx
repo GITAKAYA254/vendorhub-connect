@@ -23,9 +23,9 @@ const Index = () => {
         api.getTasks(),
       ]);
 
-      if (productsRes.data) setFeaturedProducts(productsRes.data.slice(0, 4));
-      if (jobsRes.data) setFeaturedJobs(jobsRes.data.slice(0, 3));
-      if (tasksRes.data) setFeaturedTasks(tasksRes.data.slice(0, 3));
+      if (productsRes.data?.products) setFeaturedProducts(productsRes.data.products.slice(0, 4));
+      if (jobsRes.data?.jobs) setFeaturedJobs(jobsRes.data.jobs.slice(0, 3));
+      if (tasksRes.data?.tasks) setFeaturedTasks(tasksRes.data.tasks.slice(0, 3));
       setIsLoading(false);
     };
 
@@ -42,7 +42,7 @@ const Index = () => {
               Your One-Stop Marketplace
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Discover products, find jobs, and complete tasks all in one place. 
+              Discover products, find jobs, and complete tasks all in one place.
               Connect with trusted vendors and grow your business.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

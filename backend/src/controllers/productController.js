@@ -5,12 +5,39 @@ import {
   updateProduct,
   deleteProduct,
 } from '../services/productService.js';
+import { getRelatedProducts } from '../services/recommendationService.js';
 import { successResponse } from '../utils/response.js';
 import { buildPagination } from '../utils/pagination.js';
+import path from 'path';
 
 export const createProductHandler = async (req, res, next) => {
   try {
-    const product = await createProduct(req.user.id, req.body);
+    // Process uploaded files if any
+    const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+
+    // Parse tags (multipart form data sends arrays as strings sometimes)
+    let tags = [];
+    if (req.body.tags) {
+      if (Array.isArray(req.body.tags)) {
+        tags = req.body.tags;
+      } else {
+        try {
+          tags = JSON.parse(req.body.tags);
+        } catch {
+          tags = req.body.tags.split(',').map(t => t.trim());
+        }
+      }
+    }
+
+    const payload = {
+      ...req.body,
+      price: req.body.price ? Number(req.body.price) : undefined,
+      stock: req.body.stock ? Number(req.body.stock) : undefined,
+      images, // passing URL strings
+      tags,
+    };
+
+    const product = await createProduct(req.user.id, payload);
     res.status(201).json(successResponse({ product }));
   } catch (err) {
     next(err);
@@ -51,7 +78,30 @@ export const getProductHandler = async (req, res, next) => {
 
 export const updateProductHandler = async (req, res, next) => {
   try {
-    const product = await updateProduct(req.params.id, req.user.id, req.body);
+    const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : undefined;
+
+    let tags = undefined;
+    if (req.body.tags) {
+      if (Array.isArray(req.body.tags)) {
+        tags = req.body.tags;
+      } else {
+        try {
+          tags = JSON.parse(req.body.tags);
+        } catch {
+          tags = req.body.tags.split(',').map(t => t.trim());
+        }
+      }
+    }
+
+    const payload = {
+      ...req.body,
+      price: req.body.price ? Number(req.body.price) : undefined,
+      stock: req.body.stock ? Number(req.body.stock) : undefined,
+      images,
+      tags
+    };
+
+    const product = await updateProduct(req.params.id, req.user.id, payload);
     res.json(successResponse({ product }));
   } catch (err) {
     next(err);
@@ -67,3 +117,11 @@ export const deleteProductHandler = async (req, res, next) => {
   }
 };
 
+export const getRelatedProductsHandler = async (req, res, next) => {
+  try {
+    const products = await getRelatedProducts(req.params.id);
+    res.json(successResponse({ products }));
+  } catch (err) {
+    next(err);
+  }
+};

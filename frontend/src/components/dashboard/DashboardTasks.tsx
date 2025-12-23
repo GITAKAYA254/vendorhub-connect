@@ -33,15 +33,15 @@ export const DashboardTasks = () => {
   const fetchTasks = async () => {
     setIsLoading(true);
     const result = await api.getTasks();
-    if (result.data) {
-      setTasks(result.data);
+    if (result.data?.tasks) {
+      setTasks(result.data.tasks);
     }
     setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const taskData = {
       ...formData,
       dueDate: formData.dueDate || undefined,
@@ -71,7 +71,7 @@ export const DashboardTasks = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this task?')) return;
-    
+
     const result = await api.deleteTask(id);
     if (result.error) {
       toast.error(result.error);

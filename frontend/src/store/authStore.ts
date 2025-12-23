@@ -22,12 +22,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     const result = await api.login(email, password);
-    
+
     if (result.error) {
       set({ error: result.error, isLoading: false });
       return false;
     }
-    
+
     // If server returns a token (also set as cookie), save it to localStorage
     const token = result.data?.token;
     if (token && typeof window !== 'undefined') {
@@ -41,12 +41,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (email, password, name, isVendor) => {
     set({ isLoading: true, error: null });
     const result = await api.register(email, password, name, isVendor);
-    
+
     if (result.error) {
       set({ error: result.error, isLoading: false });
       return false;
     }
-    
+
     const token = result.data?.token;
     if (token && typeof window !== 'undefined') {
       localStorage.setItem('token', token);
@@ -67,10 +67,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true });
     const result = await api.getUser();
-    set({ 
-      user: result.data || null, 
+    set({
+      user: result.data?.user || null,
       isLoading: false,
-      error: result.error || null 
+      error: result.error || null
     });
   },
 }));

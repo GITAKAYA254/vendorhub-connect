@@ -22,8 +22,8 @@ export const DashboardProducts = () => {
     price: '',
     category: '',
     stock: '',
-    image: '',
   });
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -32,23 +32,30 @@ export const DashboardProducts = () => {
   const fetchProducts = async () => {
     setIsLoading(true);
     const result = await api.getProducts();
-    if (result.data) {
-      setProducts(result.data);
+    if (result.data?.products) {
+      setProducts(result.data.products);
     }
     setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-    };
+
+    const data = new FormData();
+    data.append('title', formData.name);
+    data.append('description', formData.description);
+    data.append('category', formData.category);
+    data.append('price', formData.price);
+    data.append('stock', formData.stock);
+
+    if (selectedFiles) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        data.append('images', selectedFiles[i]);
+      }
+    }
 
     if (editingProduct) {
-      const result = await api.updateProduct(editingProduct.id, productData);
+      const result = await api.updateProduct(editingProduct.id, data);
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -56,7 +63,7 @@ export const DashboardProducts = () => {
         fetchProducts();
       }
     } else {
-      const result = await api.createProduct(productData);
+      const result = await api.createProduct(data);
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -71,7 +78,7 @@ export const DashboardProducts = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    
+
     const result = await api.deleteProduct(id);
     if (result.error) {
       toast.error(result.error);
@@ -84,13 +91,13 @@ export const DashboardProducts = () => {
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setFormData({
-      name: product.name,
+      name: product.title || product.name || '',
       description: product.description,
       price: product.price.toString(),
       category: product.category,
       stock: product.stock.toString(),
-      image: product.image || '',
     });
+    setSelectedFiles(null);
     setIsDialogOpen(true);
   };
 
@@ -102,8 +109,8 @@ export const DashboardProducts = () => {
       price: '',
       category: '',
       stock: '',
-      image: '',
     });
+    setSelectedFiles(null);
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -183,12 +190,13 @@ export const DashboardProducts = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">Image URL (optional)</Label>
+                <Label htmlFor="images">Product Images</Label>
                 <Input
-                  id="image"
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  id="images"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => setSelectedFiles(e.target.files)}
                 />
               </div>
 
@@ -217,17 +225,17 @@ export const DashboardProducts = () => {
               <CardContent className="p-4">
                 <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-3">
                   {product.image ? (
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    <img src={product.image} alt={product.title || product.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Package className="h-12 w-12 text-muted-foreground/40" />
                     </div>
                   )}
                 </div>
-                <h3 className="font-semibold mb-1">{product.name}</h3>
+                <h3 className="font-semibold mb-1">{product.title || product.name}</h3>
                 <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
+                  <span className="font-bold text-primary">KS {product.price.toLocaleString()}</span>
                   <span className="text-sm text-muted-foreground">{product.stock} in stock</span>
                 </div>
                 <div className="flex gap-2">
