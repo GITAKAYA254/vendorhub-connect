@@ -16,6 +16,13 @@ const ProductDetail = () => {
   const [reviews, setReviews] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Review form state
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [newRating, setNewRating] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
@@ -43,6 +50,35 @@ const ProductDetail = () => {
     if (reviewsData.data?.reviews) setReviews(reviewsData.data.reviews);
 
     setIsLoading(false);
+  };
+
+  const handleSubmitReview = async () => {
+    if (!id) return;
+    if (newRating === 0) {
+      toast.error("Please select a rating");
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    const result = await api.addProductReview(id, {
+      rating: newRating,
+      comment: newComment,
+    });
+
+    setIsSubmittingReview(false);
+
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Review submitted successfully!");
+      setShowReviewForm(false);
+      setNewRating(0);
+      setNewComment("");
+
+      // Refresh reviews
+      const reviewsData = await api.getProductReviews(id);
+      if (reviewsData.data?.reviews) setReviews(reviewsData.data.reviews);
+    }
   };
 
   const handleAddToCart = () => {
@@ -157,10 +193,65 @@ const ProductDetail = () => {
       </div>
 
       {/* Reviews Section */}
+      {/* Reviews Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Customer Reviews</h2>
+          <Button onClick={() => setShowReviewForm(!showReviewForm)} variant="outline">
+            Write a Review
+          </Button>
+        </div>
+
+        {showReviewForm && (
+          <div className="bg-card border rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold mb-4">Add Your Review</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Rating</label>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setNewRating(star)}
+                      className="focus:outline-none"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${star <= newRating ? 'text-yellow-500 fill-current' : 'text-gray-300'
+                          }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="comment" className="block text-sm font-medium mb-2">
+                  Comment
+                </label>
+                <textarea
+                  id="comment"
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Share your thoughts..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setShowReviewForm(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmitReview} disabled={isSubmittingReview || newRating === 0}>
+                  {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {reviews.length === 0 ? (
-          <p className="text-muted-foreground">No reviews yet.</p>
+          <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
         ) : (
           <div className="grid gap-4">
             {reviews.map((review) => (

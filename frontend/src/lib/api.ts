@@ -278,6 +278,13 @@ class ApiService {
     );
   }
 
+  async addVendorReview(vendorId: string, data: { rating: number; comment: string }) {
+    return this.request<{ review: any }>(`/api/reviews/vendor/${vendorId}`, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+  }
+
   // Search API
   async search(query: string) {
     return this.request<SearchResults>(
