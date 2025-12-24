@@ -77,8 +77,13 @@ const VendorProfile = () => {
       setNewComment("");
 
       // Refresh reviews
-      const reviewsRes = await api.getVendorReviews(id);
-      if (reviewsRes.data?.reviews) setReviews(reviewsRes.data.reviews);
+      try {
+        const reviewsRes = await api.getVendorReviews(id);
+        if (reviewsRes.data?.reviews) setReviews(reviewsRes.data.reviews);
+      } catch (error) {
+        console.error('Failed to refresh reviews:', error);
+        // User already saw success, so just log the error
+      }
     }
   };
 
