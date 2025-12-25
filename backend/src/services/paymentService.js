@@ -1,9 +1,28 @@
 import { prisma } from '../lib/prisma.js';
 import { initiateSTKPush } from '../utils/mpesa.js';
 
-export const initiatePayment = async (userId, { amount, phoneNumber, orderId, provider = 'mpesa' }) => {
-    // 1. Create Payment Record
-    // We use a clean reference for tracking
+/**
+ * Initiate a payment.
+ * Now fetches vendor-specific payment settings if available.
+ */
+export const initiatePayment = async (userId, { amount, phoneNumber, orderId, vendorId, provider = 'mpesa' }) => {
+    // 1. Fetch Vendor Payment Config if vendorId is provided
+    let vendorConfig = null;
+    if (vendorId) {
+        const method = await prisma.vendorPaymentMethod.findUnique({
+            where: {
+                vendorId_type: {
+                    vendorId,
+                    type: provider.toUpperCase()
+                }
+            }
+        });
+        if (method && method.isActive) {
+            vendorConfig = method.config;
+        }
+    }
+
+    // 2. Create Payment Record
     const reference = `ORD-${orderId}-${Date.now().toString().slice(-4)}`;
 
     const payment = await prisma.payment.create({
@@ -12,16 +31,17 @@ export const initiatePayment = async (userId, { amount, phoneNumber, orderId, pr
             provider,
             status: 'pending',
             reference,
-            userId, // Link payment to user
+            userId,
             orderPaymentLink: {
                 create: {
                     orderId,
                 },
             },
+            metadata: { vendorId }, // track which vendor this belongs to
         },
     });
 
-    // 2. Initiate Provider Logic
+    // 3. Initiate Provider Logic
     if (provider === 'mpesa') {
         try {
             const mpesaResponse = await initiateSTKPush({
@@ -29,22 +49,21 @@ export const initiatePayment = async (userId, { amount, phoneNumber, orderId, pr
                 amount,
                 reference,
                 description: `Order ${orderId}`,
+                vendorConfig // Pass the vendor's shortcode/creds
             });
 
-            // Store provider-specific IDs (CheckoutRequestID) in metadata for callback matching
             await prisma.payment.update({
                 where: { id: payment.id },
                 data: {
-                    metadata: mpesaResponse, // { MerchantRequestID, CheckoutRequestID, ... }
+                    metadata: { ...payment.metadata, ...mpesaResponse },
                 },
             });
 
             return { payment, providerResponse: mpesaResponse };
         } catch (error) {
-            // Mark as failed if initiation fails
             await prisma.payment.update({
                 where: { id: payment.id },
-                data: { status: 'failed', metadata: { error: error.message } },
+                data: { status: 'failed', metadata: { ...payment.metadata, error: error.message } },
             });
             throw error;
         }
@@ -55,16 +74,12 @@ export const initiatePayment = async (userId, { amount, phoneNumber, orderId, pr
 
 export const handleMpesaCallback = async (body) => {
     const { Body } = body;
-
-    if (!Body?.stkCallback) {
-        throw new Error('Invalid callback body');
-    }
+    if (!Body?.stkCallback) throw new Error('Invalid callback body');
 
     const { stkCallback } = Body;
     const { CheckoutRequestID, ResultCode, ResultDesc, CallbackMetadata } = stkCallback;
 
-    // Match payment by CheckoutRequestID in metadata
-    // Prisma JSON filter for PostgreSQL
+    // Search for payment in metadata
     const payment = await prisma.payment.findFirst({
         where: {
             status: 'pending',
@@ -75,14 +90,9 @@ export const handleMpesaCallback = async (body) => {
         },
     });
 
-    if (!payment) {
-        console.warn(`Payment record not found for CheckoutRequestID: ${CheckoutRequestID}`);
-        // Return true to acknowledge receipt anyway
-        return false;
-    }
+    if (!payment) return false;
 
     if (ResultCode === 0) {
-        // Success
         const items = CallbackMetadata?.Item || [];
         const receiptItem = items.find((i) => i.Name === 'MpesaReceiptNumber');
         const transactionId = receiptItem?.Value?.toString();
@@ -95,9 +105,7 @@ export const handleMpesaCallback = async (body) => {
                 metadata: { ...payment.metadata, callback: stkCallback },
             },
         });
-        console.log(`Payment ${payment.id} completed. Receipt: ${transactionId}`);
     } else {
-        // Failed / Cancelled
         await prisma.payment.update({
             where: { id: payment.id },
             data: {
@@ -105,22 +113,13 @@ export const handleMpesaCallback = async (body) => {
                 metadata: { ...payment.metadata, callback: stkCallback, failureReason: ResultDesc },
             },
         });
-        console.log(`Payment ${payment.id} failed: ${ResultDesc}`);
     }
     return true;
 };
 
 export const getPaymentStatus = async (paymentId) => {
-    const payment = await prisma.payment.findUnique({
+    return prisma.payment.findUnique({
         where: { id: paymentId },
-        include: {
-            orderPaymentLink: true,
-        },
+        include: { orderPaymentLink: true },
     });
-
-    if (!payment) {
-        throw new Error('Payment not found');
-    }
-
-    return payment;
 };

@@ -28,6 +28,9 @@ app.use(
 // Parse JSON request bodies
 app.use(express.json());
 
+// Serve static files from the 'uploads' directory
+app.use("/uploads", express.static("uploads"));
+
 // Parse cookies on incoming requests (populates `req.cookies`)
 app.use(cookieParser());
 

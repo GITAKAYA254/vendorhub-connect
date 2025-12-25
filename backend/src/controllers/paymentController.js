@@ -3,7 +3,7 @@ import { successResponse } from '../utils/response.js';
 
 export const initiatePaymentHandler = async (req, res, next) => {
     try {
-        const { amount, phoneNumber, orderId } = req.body;
+        const { amount, phoneNumber, orderId, vendorId } = req.body;
         // Basic validation
         if (!amount || !phoneNumber || !orderId) {
             const error = new Error('Missing required fields: amount, phoneNumber, orderId');

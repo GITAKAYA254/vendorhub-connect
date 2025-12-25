@@ -8,6 +8,12 @@ interface ApiResponse<T> {
 }
 
 class ApiService {
+  getImageUrl(url: string | undefined | null): string {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${API_BASE_URL}${url}`;
+  }
+
   private async request<T>(
     endpoint: string,
     options?: RequestInit
@@ -129,6 +135,13 @@ class ApiService {
     const params = new URLSearchParams(filters);
     return this.request<{ products: Product[]; pagination: Pagination }>(
       `/api/products?${params}`
+    );
+  }
+
+  async getMyProducts(filters?: Record<string, string>) {
+    const params = new URLSearchParams(filters);
+    return this.request<{ products: Product[]; pagination: Pagination }>(
+      `/api/products/me?${params}`
     );
   }
 
@@ -291,6 +304,28 @@ class ApiService {
       `/api/search?q=${encodeURIComponent(query)}`
     );
   }
+
+  // Vendor Payment Methods
+  async getMyPaymentMethods() {
+    return this.request<{ methods: VendorPaymentMethod[] }>("/api/vendor-payment-methods");
+  }
+
+  async getVendorPaymentMethods(vendorId: string) {
+    return this.request<{ methods: Partial<VendorPaymentMethod>[] }>(`/api/vendor-payment-methods/vendor/${vendorId}`);
+  }
+
+  async updatePaymentMethod(data: { type: string; config: any; isActive?: boolean }) {
+    return this.request<{ method: VendorPaymentMethod }>("/api/vendor-payment-methods", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async removePaymentMethod(type: string) {
+    return this.request<{ message: string }>(`/api/vendor-payment-methods/${type}`, {
+      method: "DELETE",
+    });
+  }
 }
 
 export const api = new ApiService();
@@ -361,4 +396,14 @@ export interface Pagination {
   limit: number;
   total: number;
   pages?: number;
+}
+
+export interface VendorPaymentMethod {
+  id: string;
+  vendorId: string;
+  type: 'MPESA' | 'CARD' | 'CASH';
+  config: any;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

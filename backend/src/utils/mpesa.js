@@ -1,8 +1,17 @@
 import axios from 'axios';
 
-const getAccessToken = async () => {
-    const consumerKey = process.env.MPESA_CONSUMER_KEY;
-    const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
+/**
+ * Get Access Token for M-Pesa API.
+ * Supports passing custom credentials for multi-vendor distributed setup.
+ */
+const getAccessToken = async (customCreds = null) => {
+    const consumerKey = customCreds?.consumerKey || process.env.MPESA_CONSUMER_KEY;
+    const consumerSecret = customCreds?.consumerSecret || process.env.MPESA_CONSUMER_SECRET;
+
+    if (!consumerKey || !consumerSecret) {
+        throw new Error('M-Pesa Consumer Key or Secret missing');
+    }
+
     const authUrl =
         process.env.MPESA_ENV === 'production'
             ? 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
@@ -19,14 +28,23 @@ const getAccessToken = async () => {
         return response.data.access_token;
     } catch (error) {
         console.error('M-Pesa Token Error:', error.response?.data || error.message);
-        throw new Error('Failed to get M-Pesa access token');
+        throw new Error('Failed to get M-Pesa access token. Check credentials.');
     }
 };
 
-export const initiateSTKPush = async ({ phoneNumber, amount, reference, description }) => {
-    const token = await getAccessToken();
-    const shortCode = process.env.MPESA_SHORTCODE;
-    const passkey = process.env.MPESA_PASSKEY;
+/**
+ * Initiate STK Push (Lipa na M-Pesa Online).
+ * Now accepts a 'vendorConfig' object for multi-vendor support.
+ */
+export const initiateSTKPush = async ({ phoneNumber, amount, reference, description, vendorConfig = null }) => {
+    // Determine which credentials to use
+    // If vendorConfig is provided, it can override global settings
+    const shortCode = vendorConfig?.shortCode || process.env.MPESA_SHORTCODE;
+    const passkey = vendorConfig?.passkey || process.env.MPESA_PASSKEY;
+
+    // For distributed credentials (Option 2)
+    const token = await getAccessToken(vendorConfig?.consumerKey ? vendorConfig : null);
+
     const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
     const password = Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
 
@@ -39,8 +57,8 @@ export const initiateSTKPush = async ({ phoneNumber, amount, reference, descript
         BusinessShortCode: shortCode,
         Password: password,
         Timestamp: timestamp,
-        TransactionType: 'CustomerPayBillOnline',
-        Amount: Math.ceil(amount), // M-Pesa accepts integers
+        TransactionType: vendorConfig?.type === 'PB' ? 'CustomerPayBillOnline' : 'CustomerBuyGoodsOnline',
+        Amount: Math.ceil(amount),
         PartyA: phoneNumber,
         PartyB: shortCode,
         PhoneNumber: phoneNumber,

@@ -113,7 +113,7 @@ const VendorProfile = () => {
           <div className="flex items-center space-x-6">
             {vendor.logo ? (
               <img
-                src={vendor.logo}
+                src={api.getImageUrl(vendor.logo)}
                 alt={vendor.name}
                 className="h-24 w-24 rounded-full border-4 border-background"
               />

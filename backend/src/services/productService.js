@@ -1,11 +1,16 @@
 import { prisma } from '../lib/prisma.js';
 
-const formatProduct = (product) => ({
-  ...product,
-  price: Number(product.price),
-  images: product.productImages?.map((img) => img.url) || product.images || [], // Fallback to old images array
-  primaryImage: product.productImages?.find((img) => img.isPrimary)?.url || product.images?.[0] || null,
-});
+const formatProduct = (product) => {
+  const primaryImageUrl = product.productImages?.find((img) => img.isPrimary)?.url || product.images?.[0] || null;
+
+  return {
+    ...product,
+    price: Number(product.price),
+    images: product.productImages?.map((img) => img.url) || product.images || [],
+    primaryImage: primaryImageUrl,
+    image: primaryImageUrl, // Standard field for frontend
+  };
+};
 
 export const createProduct = async (vendorId, payload) => {
   const { images = [], tags = [], ...data } = payload;
@@ -53,6 +58,24 @@ export const listProducts = async ({ skip, limit }, filters = {}) => {
       include: { productImages: true },
     }),
     prisma.product.count({ where }),
+  ]);
+
+  return {
+    items: items.map(formatProduct),
+    total,
+  };
+};
+
+export const listMyProducts = async (vendorId, { skip, limit }) => {
+  const [items, total] = await Promise.all([
+    prisma.product.findMany({
+      where: { vendorId },
+      skip,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: { productImages: true },
+    }),
+    prisma.product.count({ where: { vendorId } }),
   ]);
 
   return {

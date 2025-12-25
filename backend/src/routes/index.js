@@ -7,6 +7,7 @@ import taskRoutes from './taskRoutes.js';
 import searchRoutes from './searchRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import reviewRoutes from './reviewRoutes.js';
+import vendorPaymentRoutes from './paymentMethodRoutes.js';
 
 const router = Router();
 
@@ -18,9 +19,6 @@ router.use('/tasks', taskRoutes);
 router.use('/search', searchRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/reviews', reviewRoutes);
+router.use('/vendor-payment-methods', vendorPaymentRoutes);
 
 export default router;
-
-
-
-

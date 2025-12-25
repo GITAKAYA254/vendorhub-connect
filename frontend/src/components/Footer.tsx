@@ -6,14 +6,14 @@ export const Footer = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-semibold mb-3">MarketHub</h3>
-            <p className="text-sm text-muted-foreground">
-              Your trusted multi-vendor marketplace for products, jobs, and tasks.
+            <h3 className="text-xl font-black tracking-tighter text-primary mb-3">BWS</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              The premier ecosystem for elite commerce, strategic mandates, and high-yield execution.
             </p>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-3">Shop</h4>
+            <h4 className="font-bold uppercase tracking-widest text-[10px] text-primary mb-4">Marketplace</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/products" className="hover:text-primary transition-colors">Products</Link></li>
               <li><Link to="/jobs" className="hover:text-primary transition-colors">Jobs</Link></li>
@@ -22,15 +22,15 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3">For Vendors</h4>
+            <h4 className="font-bold uppercase tracking-widest text-[10px] text-primary mb-4">Vendors</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/register" className="hover:text-primary transition-colors">Become a Vendor</Link></li>
-              <li><Link to="/dashboard" className="hover:text-primary transition-colors">Vendor Dashboard</Link></li>
+              <li><Link to="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3">Support</h4>
+            <h4 className="font-bold uppercase tracking-widest text-[10px] text-primary mb-4">Support</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
@@ -40,8 +40,8 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} MarketHub. All rights reserved.</p>
+        <div className="border-t border-primary/10 mt-12 pt-8 text-center text-xs text-muted-foreground uppercase tracking-widest font-medium">
+          <p>&copy; {new Date().getFullYear()} BWS - Black Wall Street. All rights Reserved.</p>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createProductHandler,
   listProductsHandler,
+  listMyProductsHandler,
   getProductHandler,
   updateProductHandler,
   deleteProductHandler,
@@ -19,6 +20,7 @@ import { upload, handleMulterError } from '../middleware/uploadMiddleware.js';
 const router = Router();
 
 router.get('/', listProductsHandler);
+router.get('/me', authenticate, requireRole('vendor'), listMyProductsHandler);
 router.get('/:id', validateRequest(productIdSchema), getProductHandler);
 router.get('/:id/related', validateRequest(productIdSchema), getRelatedProductsHandler);
 

@@ -121,8 +121,8 @@ const ProductDetail = () => {
           <div className="aspect-square rounded-lg overflow-hidden bg-muted border">
             {selectedImage ? (
               <img
-                src={selectedImage}
-                alt={product.title || product.name}
+                src={api.getImageUrl(selectedImage)}
+                alt={product.title || product.name || ''}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -141,51 +141,51 @@ const ProductDetail = () => {
                   className={`relative h-20 w-20 rounded-md overflow-hidden border-2 ${selectedImage === img ? 'border-primary' : 'border-transparent'
                     }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <img src={api.getImageUrl(img)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col justify-center">
           <div>
-            <Badge className="mb-2">{product.category}</Badge>
-            <h1 className="text-4xl font-bold mb-4">{product.title || product.name}</h1>
-            <p className="text-3xl font-bold text-primary mb-4">
-              KS {product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-            </p>
-            <p className="text-muted-foreground mb-4">
-              {product.stock > 0 ? (
-                <span className="text-emerald-500 font-medium">
-                  {product.stock} items in stock
-                </span>
-              ) : (
-                <span className="text-destructive font-medium">Out of stock</span>
-              )}
-            </p>
+            <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 uppercase tracking-widest text-[10px] font-bold">
+              {product.category}
+            </Badge>
+            <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight leading-tight uppercase">
+              {product.title || product.name}
+            </h1>
+            <div className="flex items-center gap-4 mb-6">
+              <p className="text-3xl md:text-4xl font-black text-primary">
+                KS {product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </p>
+              <div className={`px-2 py-1 rounded text-[10px] uppercase font-bold tracking-tighter ${product.stock > 0 ? 'bg-success/20 text-success border border-success/30' : 'bg-destructive/20 text-destructive border border-destructive/30'}`}>
+                {product.stock > 0 ? `${product.stock} In Stock` : 'Sold Out'}
+              </div>
+            </div>
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-muted-foreground">{product.description}</p>
+            <h2 className="text-sm uppercase tracking-widest font-black text-muted-foreground mb-3">Description</h2>
+            <p className="text-muted-foreground leading-relaxed text-lg">{product.description}</p>
           </div>
 
-          <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-4 pt-6">
             <Button
               size="lg"
-              className="w-full"
+              className="h-14 flex-1 text-lg font-bold shadow-xl shadow-primary/20 uppercase tracking-wider"
               onClick={handleAddToCart}
               disabled={product.stock === 0}
             >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Add to Cart
+              <ShoppingCart className="mr-3 h-5 w-5" />
+              Buy Now
             </Button>
 
-            <Link to={`/vendor/${product.vendorId}`}>
-              <Button variant="outline" size="lg" className="w-full">
-                <Store className="mr-2 h-5 w-5" />
-                View Vendor
+            <Link to={`/vendor/${product.vendorId}`} className="flex-1">
+              <Button variant="outline" size="lg" className="h-14 w-full text-lg border-primary/20 hover:border-primary font-bold uppercase tracking-wider">
+                <Store className="mr-3 h-5 w-5" />
+                Vendor Profile
               </Button>
             </Link>
           </div>

@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { api, Job } from '@/lib/api';
 import { Briefcase } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -30,10 +31,13 @@ const Jobs = () => {
 
   return (
     <main className="flex-1 container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Jobs</h1>
-          <p className="text-muted-foreground">Find freelance opportunities and project work</p>
+          <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 uppercase tracking-widest text-[10px] font-bold">
+            Work
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight uppercase">Jobs</h1>
+          <p className="text-muted-foreground text-lg">Find project work and long-term roles.</p>
         </div>
 
         <div className="flex items-center space-x-4 mt-4 md:mt-0">

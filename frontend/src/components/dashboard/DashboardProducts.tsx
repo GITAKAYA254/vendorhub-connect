@@ -31,7 +31,7 @@ export const DashboardProducts = () => {
 
   const fetchProducts = async () => {
     setIsLoading(true);
-    const result = await api.getProducts();
+    const result = await api.getMyProducts();
     if (result.data?.products) {
       setProducts(result.data.products);
     }
@@ -225,7 +225,7 @@ export const DashboardProducts = () => {
               <CardContent className="p-4">
                 <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-3">
                   {product.image ? (
-                    <img src={product.image} alt={product.title || product.name} className="w-full h-full object-cover" />
+                    <img src={api.getImageUrl(product.image)} alt={product.title || product.name || ''} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Package className="h-12 w-12 text-muted-foreground/40" />

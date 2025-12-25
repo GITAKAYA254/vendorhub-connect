@@ -1,6 +1,7 @@
 import {
   createProduct,
   listProducts,
+  listMyProducts,
   getProductById,
   updateProduct,
   deleteProduct,
@@ -52,6 +53,25 @@ export const listProductsHandler = async (req, res, next) => {
       category: req.query.category,
     };
     const { items, total } = await listProducts(pagination, filters);
+    res.json(
+      successResponse({
+        products: items,
+        pagination: {
+          page: pagination.page,
+          limit: pagination.limit,
+          total,
+        },
+      }),
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const listMyProductsHandler = async (req, res, next) => {
+  try {
+    const pagination = buildPagination(req.query);
+    const { items, total } = await listMyProducts(req.user.id, pagination);
     res.json(
       successResponse({
         products: items,
