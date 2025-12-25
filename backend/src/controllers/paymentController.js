@@ -52,10 +52,18 @@ export const getPaymentStatusHandler = async (req, res, next) => {
 
         if (!isOwner && !isAdmin) {
             const error = new Error('Access denied');
+export const getPaymentStatusHandler = async (req, res, next) => {
+    try {
+        const payment = await getPaymentStatus(req.params.id);
+        
+        // Security check: ensure user owns the payment or is admin
+        const orderLink = payment.orderPaymentLink;
+        if (orderLink?.order?.userId !== req.user.id && req.user.role !== 'admin') {
+            const error = new Error('Access denied');
             error.status = 403;
             throw error;
         }
-
+        
         res.json(successResponse({ payment }));
     } catch (err) {
         next(err);
