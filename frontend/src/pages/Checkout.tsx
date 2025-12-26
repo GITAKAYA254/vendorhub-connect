@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCartStore } from '@/store/cartStore';
-import { CreditCard, Phone, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { CreditCard, Phone, Loader2, AlertCircle, CheckCircle2, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, VendorPaymentMethod } from '@/lib/api';
 import { useNavigate } from 'react-router-dom';

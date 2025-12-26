@@ -11,7 +11,12 @@ class ApiService {
   getImageUrl(url: string | undefined | null): string {
     if (!url) return '';
     if (url.startsWith('http')) return url;
-    return `${API_BASE_URL}${url}`;
+
+    const storedToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const separator = url.includes('?') ? '&' : '?';
+    const tokenPart = storedToken ? `${separator}token=${storedToken}` : '';
+
+    return `${API_BASE_URL}${url}${tokenPart}`;
   }
 
   private async request<T>(
@@ -256,6 +261,7 @@ class ApiService {
     amount: number;
     phoneNumber: string;
     orderId: string;
+    vendorId?: string;
     provider?: string;
   }) {
     return this.request<{ payment: any; providerResponse: any }>(
