@@ -10,8 +10,8 @@ export const authenticate = async (req, res, next) => {
     const tokenFromHeader = authHeader.startsWith("Bearer ")
       ? authHeader.slice(7)
       : null;
-    // Prefer header token, fallback to cookie token
-    const token = tokenFromHeader || req.cookies?.token;
+    // Prefer header token, fallback to cookie token, fallback to query param (for images)
+    const token = tokenFromHeader || req.cookies?.token || req.query.token;
 
     if (!token) {
       return res.status(401).json(errorResponse("Authentication required"));

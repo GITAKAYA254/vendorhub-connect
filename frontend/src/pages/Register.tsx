@@ -19,7 +19,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await register(email, password, name, isVendor);
-    
+
     if (success) {
       toast.success('Account created successfully!');
       navigate(isVendor ? '/dashboard' : '/');
@@ -36,7 +36,7 @@ const Register = () => {
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>Join MarketHub today</CardDescription>
         </CardHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -62,7 +62,7 @@ const Register = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -92,7 +92,7 @@ const Register = () => {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
-            
+
             <p className="text-sm text-center text-muted-foreground">
               Already have an account?{' '}
               <Link to="/login" className="text-primary hover:underline font-medium">

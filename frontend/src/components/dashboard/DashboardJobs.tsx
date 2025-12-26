@@ -33,15 +33,15 @@ export const DashboardJobs = () => {
   const fetchJobs = async () => {
     setIsLoading(true);
     const result = await api.getJobs();
-    if (result.data) {
-      setJobs(result.data);
+    if (result.data?.jobs) {
+      setJobs(result.data.jobs);
     }
     setIsLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const jobData = {
       ...formData,
       budget: parseFloat(formData.budget),
@@ -71,7 +71,7 @@ export const DashboardJobs = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this job?')) return;
-    
+
     const result = await api.deleteJob(id);
     if (result.error) {
       toast.error(result.error);

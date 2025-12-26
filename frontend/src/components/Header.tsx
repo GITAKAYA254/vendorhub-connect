@@ -33,8 +33,8 @@ export const Header = () => {
         <div className="flex h-16 items-center justify-between gap-3">
           <Link to="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/70" />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              MarketHub
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              BWS
             </span>
           </Link>
 

@@ -49,6 +49,29 @@ export const getVendorProfile = async (id) => {
     });
   }
 
+  // If still no profile, check if the ID corresponds to a User who is a vendor
+  if (!profile) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: { vendorProfile: true }
+    });
+
+    if (user && user.role === 'vendor') {
+      // Create a "virtual" profile so the page doesn't crash
+      return {
+        id: 'virtual-' + user.id,
+        userId: user.id,
+        companyName: user.name, // Use user name as default company name
+        description: 'Quality vendor on VendorHub Connect',
+        logo: null,
+        website: null,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        user: user
+      };
+    }
+  }
+
   if (!profile) {
     const error = new Error('Vendor not found');
     error.status = 404;

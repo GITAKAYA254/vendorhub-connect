@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore';
 import { DashboardProducts } from '@/components/dashboard/DashboardProducts';
 import { DashboardJobs } from '@/components/dashboard/DashboardJobs';
 import { DashboardTasks } from '@/components/dashboard/DashboardTasks';
+import { DashboardPaymentSettings } from '@/components/dashboard/DashboardPaymentSettings';
 
 const Dashboard = () => {
   const { user } = useAuthStore();
@@ -15,32 +16,37 @@ const Dashboard = () => {
 
   return (
     <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Vendor Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage your products, jobs, and tasks
-          </p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Vendor Dashboard</h1>
+        <p className="text-muted-foreground">
+          Manage your products, jobs, and tasks
+        </p>
+      </div>
 
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="jobs">Jobs</TabsTrigger>
-            <TabsTrigger value="tasks">Tasks</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="products" className="space-y-6">
+        <TabsList className="grid w-full max-w-md grid-cols-4">
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="jobs">Jobs</TabsTrigger>
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="products">
-            <DashboardProducts />
-          </TabsContent>
+        <TabsContent value="products">
+          <DashboardProducts />
+        </TabsContent>
 
-          <TabsContent value="jobs">
-            <DashboardJobs />
-          </TabsContent>
+        <TabsContent value="jobs">
+          <DashboardJobs />
+        </TabsContent>
 
-          <TabsContent value="tasks">
-            <DashboardTasks />
-          </TabsContent>
-        </Tabs>
+        <TabsContent value="tasks">
+          <DashboardTasks />
+        </TabsContent>
+
+        <TabsContent value="payments">
+          <DashboardPaymentSettings />
+        </TabsContent>
+      </Tabs>
     </main>
   );
 };

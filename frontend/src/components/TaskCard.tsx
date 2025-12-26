@@ -11,57 +11,66 @@ interface TaskCardProps {
 
 const priorityColors = {
   low: 'bg-muted text-muted-foreground',
-  medium: 'bg-warning text-white',
-  high: 'bg-destructive text-white',
+  medium: 'bg-primary/20 text-primary border-primary/30',
+  high: 'bg-destructive/20 text-destructive border-destructive/30',
 };
 
 const statusColors = {
   pending: 'bg-muted text-muted-foreground',
   in_progress: 'bg-primary text-primary-foreground',
-  completed: 'bg-success text-white',
+  completed: 'bg-success/20 text-success border-success/30',
 };
 
 export const TaskCard = ({ task }: TaskCardProps) => {
   return (
     <Link to={`/tasks/${task.id}`}>
-      <Card className="group overflow-hidden transition-all hover:shadow-[var(--shadow-hover)]">
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <div className="h-10 w-10 rounded-lg bg-accent flex items-center justify-center">
-                <CheckSquare className="h-5 w-5 text-accent-foreground" />
+      <Card className="group overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(212,175,55,0.15)] border-primary/10 bg-secondary/30 backdrop-blur-sm hover:border-primary/40 rounded-[2rem] relative h-full flex flex-col">
+        {/* Hover decorative element */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+
+        <CardContent className="p-8 flex-1 flex flex-col">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-500">
+                <CheckSquare className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors" />
               </div>
               <div>
-                <h3 className="font-semibold line-clamp-1 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-black line-clamp-1 group-hover:text-primary transition-colors tracking-tight uppercase">
                   {task.title}
                 </h3>
+                <Badge className={`uppercase text-[10px] font-black tracking-tighter mt-1 ${priorityColors[task.priority]}`} variant="outline">
+                  {task.priority} Priority
+                </Badge>
               </div>
             </div>
-            <Badge className={priorityColors[task.priority]}>
-              {task.priority}
-            </Badge>
           </div>
 
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-            {task.description}
+          <p className="text-base text-muted-foreground line-clamp-3 mb-8 leading-relaxed italic flex-1">
+            "{task.description}"
           </p>
 
-          <div className="flex items-center justify-between">
-            <Badge className={statusColors[task.status]}>
-              {task.status.replace('_', ' ')}
-            </Badge>
+          <div className="flex items-center justify-between pt-6 border-t border-primary/5">
+            <div>
+              <span className="block text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Status</span>
+              <Badge className={`uppercase text-[10px] font-black tracking-tighter ${statusColors[task.status]}`} variant="outline">
+                {task.status.replace('_', ' ')}
+              </Badge>
+            </div>
             {task.dueDate && (
-              <div className="flex items-center text-xs text-muted-foreground">
-                <Calendar className="mr-1 h-3 w-3" />
-                {new Date(task.dueDate).toLocaleDateString()}
+              <div className="text-right">
+                <span className="block text-[10px] uppercase tracking-widest font-bold text-muted-foreground mb-1">Due Date</span>
+                <div className="flex items-center text-xs text-muted-foreground font-medium justify-end">
+                  <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                  {new Date(task.dueDate).toLocaleDateString()}
+                </div>
               </div>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="p-6 pt-0">
-          <Button className="w-full" variant="outline">
-            View Details
+        <CardFooter className="p-8 pt-0">
+          <Button className="w-full font-black uppercase tracking-[0.2em] h-14 border-primary/20 hover:border-primary hover:text-primary-foreground hover:bg-primary transition-all duration-500 rounded-xl" variant="outline">
+            View Task
           </Button>
         </CardFooter>
       </Card>
