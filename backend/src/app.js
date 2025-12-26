@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser"; // cookie parsing
 import routes from "./routes/index.js"; // application routes
 import { notFoundHandler, errorHandler } from "./middleware/errorMiddleware.js"; // error handlers
 import { successResponse } from "./utils/response.js"; // standardized response shape
+import { authenticate } from "./middleware/authMiddleware.js";
+import { getUploadPath } from "./utils/storage.js";
 
 const app = express();
 
@@ -28,11 +30,11 @@ app.use(
 // Parse JSON request bodies
 app.use(express.json());
 
-// Serve static files from the 'uploads' directory
-app.use("/uploads", express.static("uploads"));
-
 // Parse cookies on incoming requests (populates `req.cookies`)
 app.use(cookieParser());
+
+// Serve static files from the 'uploads' directory, protected by authentication
+app.use("/uploads", authenticate, express.static(getUploadPath()));
 
 // HTTP request logger useful during development
 app.use(morgan("dev"));

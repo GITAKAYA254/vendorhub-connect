@@ -1,8 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Define upload directory
-const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define upload directory relative to the project root
+// backend/src/utils/storage.js -> backend/uploads
+const UPLOAD_DIR = path.resolve(__dirname, '../../uploads');
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
